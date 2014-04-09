@@ -227,7 +227,6 @@
     return frame;
 }
 
-
 #pragma mark - Setter Methods
 
 - (void)setTintColor:(UIColor *)color {
@@ -235,7 +234,9 @@
         return;
     }
     
-    [super setTintColor:color];
+    if ([super respondsToSelector:@selector(setTintColor:)]) {
+        [super setTintColor:color];
+    }
     
     _selectionIndicator.backgroundColor = color;
     
