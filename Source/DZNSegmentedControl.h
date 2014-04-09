@@ -8,9 +8,18 @@
 //  Licence: MIT-Licence
 //
 
+#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@protocol DZNSegmentedControlDelegate;
+@class DZNSegmentedControl;
+
+@protocol DZNSegmentedControlDelegate <UIBarPositioningDelegate>
+
+@optional
+
+- (void)segmentedControl:(DZNSegmentedControl *)control didSelectSegmentAtIndex:(NSUInteger)index;
+
+@end
 
 /**
  * A drop-in replacement for UISegmentedControl showing multiple segment counts, to be used typically on a user profile.
@@ -19,26 +28,46 @@
 
 /** The control's delegate object, conforming to the UIBarPositioning protocol. */
 @property (nonatomic, weak) id <DZNSegmentedControlDelegate> delegate;
+
+
 /** The items displayed on the control. */
-@property (nonatomic, retain) NSArray *items;
+@property (nonatomic, strong) NSArray *items;
+
+
 /** The index number identifying the selected segment (that is, the last segment touched). */
-@property (nonatomic) NSInteger selectedSegmentIndex;
+@property (nonatomic, assign) NSInteger selectedSegmentIndex;
+
+
 /** Returns the number of segments the receiver has. */
-@property (nonatomic, readonly) NSUInteger numberOfSegments;
+@property (nonatomic, assign, readonly) NSUInteger numberOfSegments;
+
+
 /** The height of the control. Default is 56px. */
-@property (nonatomic, readonly) CGFloat height;
+@property (nonatomic, assign, readonly) CGFloat height;
+
+
 /** The height of the selection indicator. Default is 2px . */
-@property (nonatomic, readwrite) CGFloat selectionIndicatorHeight UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) CGFloat selectionIndicatorHeight UI_APPEARANCE_SELECTOR;
+
+
 /** The duration of the indicator's animation. Default is 0.2 sec. */
-@property (nonatomic, readwrite) CGFloat animationDuration UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) NSTimeInterval animationDuration UI_APPEARANCE_SELECTOR;
+
+
 /** The font family to be used on labels. Default is system font (HelveticaNeue). Font size is managed by the class. */
-@property (nonatomic, retain) UIFont *font UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIFont *font UI_APPEARANCE_SELECTOR;
+
+
 /** The color of the hairline. Default is light gray. To hide the hairline, just set clipsToBounds to YES, like you would do it for UIToolBar & UINavigationBar. */
-@property (nonatomic, readwrite) UIColor *hairlineColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) UIColor *hairlineColor UI_APPEARANCE_SELECTOR;
+
+
 /** YES to display the count number on top of the titles. Default is YES.  */
-@property (nonatomic) BOOL showsCount;
+@property (nonatomic, assign) BOOL showsCount;
+
+
 /** YES to adjust the width of the selection indicator on the title width. Default is YES.  */
-@property (nonatomic) BOOL autoAdjustSelectionIndicatorWidth;
+@property (nonatomic, assign) BOOL autoAdjustSelectionIndicatorWidth;
 
 /**
  * Initializes and returns a segmented control with segments having the given titles or images.
@@ -48,7 +77,7 @@
  * @params items An array of NSString objects only.
  * @returns A DZNSegmentedControl object or nil if there was a problem in initializing the object.
  */
-- (id)initWithItems:(NSArray *)items;
+- (instancetype)initWithItems:(NSArray *)items;
 
 /**
  * Sets the title of a segment.
@@ -103,7 +132,4 @@
  */
 - (void)removeAllSegments;
 
-@end
-
-@protocol DZNSegmentedControlDelegate <UIBarPositioningDelegate>
 @end
