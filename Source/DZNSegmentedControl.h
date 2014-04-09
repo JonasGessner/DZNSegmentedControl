@@ -69,6 +69,11 @@
 /** YES to adjust the width of the selection indicator on the title width. Default is YES.  */
 @property (nonatomic, assign) BOOL autoAdjustSelectionIndicatorWidth;
 
+
+/** The color of the selection Indicator. Default is light gray color. */
+@property (nonatomic, strong) UIColor *tintColor;
+
+
 /**
  * Initializes and returns a segmented control with segments having the given titles or images.
  * The returned segmented control is automatically sized to fit its content within the width of its superview.

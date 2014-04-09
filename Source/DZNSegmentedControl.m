@@ -15,6 +15,8 @@
     UIView *_hairline;
     NSMutableDictionary *_colors;
     BOOL _transitioning;
+    
+    UIColor *_tintColor;
 }
 
 @end
@@ -25,10 +27,14 @@
 @synthesize selectedSegmentIndex = _selectedSegmentIndex;
 @synthesize barPosition = _barPosition;
 
+@dynamic tintColor;
+
 - (instancetype)init {
     self = [super init];
     
     if (self) {
+        self.tintColor = [UIColor lightGrayColor];
+        
         _selectedSegmentIndex = -1;
         _font = [UIFont systemFontOfSize:15.0f];
         _height = 56.0f;
@@ -37,15 +43,15 @@
         _showsCount = YES;
         _autoAdjustSelectionIndicatorWidth = YES;
         
-        _selectionIndicator = [UIView new];
+        _selectionIndicator = [[UIView alloc] init];
         _selectionIndicator.backgroundColor = self.tintColor;
         [self addSubview:_selectionIndicator];
         
-        _hairline = [UIView new];
+        _hairline = [[UIView alloc] init];
         _hairline.backgroundColor = [UIColor lightGrayColor];
         [self addSubview:_hairline];
         
-        _colors = [NSMutableDictionary new];
+        _colors = [NSMutableDictionary dictionary];
     }
     
     return self;
@@ -109,7 +115,7 @@
 }
 
 - (NSArray *)buttons {
-    NSMutableArray *_buttons = [NSMutableArray new];
+    NSMutableArray *_buttons = [NSMutableArray array];
     
     for (UIView *view in self.subviews) {
         if ([view isKindOfClass:[UIButton class]]) {
@@ -123,6 +129,7 @@
     if (_items.count > 0 && segment < [self buttons].count) {
         return (UIButton *)[[self buttons] objectAtIndex:segment];
     }
+    
     return nil;
 }
 
@@ -162,8 +169,7 @@
 }
 
 - (UIColor *)titleColorForState:(UIControlState)state {
-    NSString *key = [NSString stringWithFormat:@"UIControlState%d", (int)state];
-    UIColor *color = [_colors objectForKey:key];
+    UIColor *color = [_colors objectForKey:@(state)];
     
     if (!color) {
         switch (state) {
@@ -229,14 +235,12 @@
 
 #pragma mark - Setter Methods
 
+- (UIColor *)tintColor {
+    return _tintColor;
+}
+
 - (void)setTintColor:(UIColor *)color {
-    if (!color || !_items) {
-        return;
-    }
-    
-    if ([super respondsToSelector:@selector(setTintColor:)]) {
-        [super setTintColor:color];
-    }
+    _tintColor = color;
     
     _selectionIndicator.backgroundColor = color;
     
@@ -318,7 +322,7 @@
 
 - (void)setAttributedTitle:(NSAttributedString *)attributedString forSegmentAtIndex:(NSUInteger)segment {
     UIButton *button = [self buttonAtIndex:segment];
-    button.titleLabel.numberOfLines = (_showsCount) ? 2 : 1;
+    button.titleLabel.numberOfLines = (_showsCount ? 2 : 1);
     
     [button setAttributedTitle:attributedString forState:UIControlStateNormal];
     [button setAttributedTitle:attributedString forState:UIControlStateHighlighted];
@@ -343,10 +347,10 @@
 
         NSMutableParagraphStyle *style  = [[NSMutableParagraphStyle alloc] init];
         style.alignment = NSTextAlignmentCenter;
-        style.lineBreakMode = (_showsCount) ? NSLineBreakByWordWrapping : NSLineBreakByTruncatingTail;
+        style.lineBreakMode = (_showsCount ? NSLineBreakByWordWrapping : NSLineBreakByTruncatingTail);
         style.lineBreakMode = NSLineBreakByWordWrapping;
         style.minimumLineHeight = 16.0f;
-
+        
         [attributedString addAttribute:NSParagraphStyleAttributeName value:style range:NSMakeRange(0, string.length)];
         
         if (_showsCount) {
@@ -374,7 +378,8 @@
                     _selectionIndicator.backgroundColor = color;
                 }
             }
-        } else {
+        }
+        else {
             [attributedString addAttribute:NSFontAttributeName value:_font range:NSMakeRange(0, attributedString.string.length)];
             [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.string.length)];
         }
@@ -382,8 +387,7 @@
         [button setAttributedTitle:attributedString forState:state];
     }
     
-    NSString *key = [NSString stringWithFormat:@"UIControlState%d", (int)state];
-    [_colors setObject:color forKey:key];
+    _colors[@(state)] = color;
 }
 
 - (void)setSelected:(BOOL)selected forSegmentAtIndex:(NSUInteger)segment {
@@ -397,23 +401,20 @@
         _button.userInteractionEnabled = YES;
     }
     
-    NSTimeInterval duration = (_selectedSegmentIndex < 0) ? 0.0 : _animationDuration;
+    NSTimeInterval duration = (_selectedSegmentIndex < 0 ? 0.0 : _animationDuration);
     
     _selectedSegmentIndex = segment;
     _transitioning = YES;
     
     UIButton *button = [self buttonAtIndex:segment];
     
-    [UIView animateWithDuration:duration
-                          delay:0.0
-                        options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseInOut
-                     animations:^{
-                         _selectionIndicator.frame = [self selectionIndicatorRect];
-                     }
-                     completion:^(BOOL finished) {
-                         button.userInteractionEnabled = NO;
-                         _transitioning = NO;
-                     }];
+    [UIView animateWithDuration:duration delay:0.0 options:(UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^{
+        _selectionIndicator.frame = [self selectionIndicatorRect];
+        
+    } completion:^(BOOL finished) {
+        button.userInteractionEnabled = NO;
+        _transitioning = NO;
+    }];
     
 
     [self sendActionsForControlEvents:UIControlEventValueChanged];
