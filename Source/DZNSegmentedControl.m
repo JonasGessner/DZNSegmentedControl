@@ -196,22 +196,7 @@
     frame.origin.y = (_barPosition > UIBarPositionBottom) ? 0.0f : (button.frame.size.height-_selectionIndicatorHeight);
     
     if (_autoAdjustSelectionIndicatorWidth) {
-        
-        id attributes = nil;
-        
-        if (!_showsCount) {
-            
-            NSAttributedString *attributedString = [button attributedTitleForState:UIControlStateSelected];
-            
-            if (attributedString.string.length == 0) {
-                return CGRectZero;
-            }
-            
-            NSRangePointer range = nil;
-            attributes = [attributedString attributesAtIndex:0 effectiveRange:range];
-        }
-        
-        frame.size = CGSizeMake([title sizeWithAttributes:attributes].width, _selectionIndicatorHeight);
+        frame.size = CGSizeMake([title sizeWithFont:button.titleLabel.font].width, _selectionIndicatorHeight);
         frame.origin.x = (button.frame.size.width*(_selectedSegmentIndex))+(button.frame.size.width-frame.size.width)/2;
     }
     else {
