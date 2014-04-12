@@ -11,13 +11,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@class DZNSegmentedControl;
-
 @protocol DZNSegmentedControlDelegate <UIBarPositioningDelegate>
-
-@optional
-
-- (void)segmentedControl:(DZNSegmentedControl *)control didSelectSegmentAtIndex:(NSUInteger)index;
 
 @end
 
@@ -40,10 +34,6 @@
 
 /** Returns the number of segments the receiver has. */
 @property (nonatomic, assign, readonly) NSUInteger numberOfSegments;
-
-
-/** The height of the control. Default is 56px. */
-@property (nonatomic, assign, readonly) CGFloat height;
 
 
 /** The height of the selection indicator. Default is 2px . */
